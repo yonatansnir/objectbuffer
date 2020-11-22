@@ -1,6 +1,10 @@
 import { initializeArrayBuffer, incrementRefCount } from "./store";
 import { createObjectWrapper } from "./objectWrapper";
-import type { ExternalArgsApi, GlobalCarrier, MemoryStats } from "./interfaces";
+import type {
+  ObjectBufferSettings,
+  GlobalCarrier,
+  MemoryStats,
+} from "./interfaces";
 import {
   arrayBufferCopyTo,
   externalArgsApiToExternalArgsApi,
@@ -18,26 +22,25 @@ import { saveValueIterative } from "./saveValue";
 import { TransactionalAllocator } from "./TransactionalAllocator";
 import { freeNoLongerUsedAddresses } from "./freeNoLongerUsedAddresses";
 
-export interface CreateObjectBufferOptions {
-  /**
-   *  Use SharedArrayBuffer and not regular ArrayBuffer
-   *
-   *  See browser support:
-   *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#Browser_compatibility
-   */
-  useSharedArrayBuffer?: boolean;
-}
+/**
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#Browser_compatibility
+ *
+ * Future holds additional types https://github.com/tc39/proposal-resizablearraybuffer
+ */
+export type ArrayBufferKind = "vanilla" | "shared";
 
 /**
  * Create a new objectBuffer, with the given initial value
- *
- * the initial value has to be an object.
+ * @param size The size of the ArrayBuffer to create (heap size)
+ * @param initialValue
+ * @param settings
+ * @param arrayBufferConstructor
  */
 export function createObjectBuffer<T = any>(
-  externalArgs: ExternalArgsApi,
   size: number,
   initialValue: T,
-  options: CreateObjectBufferOptions = {}
+  settings: ObjectBufferSettings = {},
+  arrayBufferKind: ArrayBufferKind = "vanilla"
 ): T {
   if (!isSupportedTopLevelValue(initialValue)) {
     throw new UnsupportedOperationError();
@@ -48,7 +51,7 @@ export function createObjectBuffer<T = any>(
       start: MEM_POOL_START,
       size,
     },
-    !!options.useSharedArrayBuffer
+    arrayBufferKind === "shared"
   );
 
   const arrayBuffer = allocator.getArrayBuffer();
@@ -64,7 +67,7 @@ export function createObjectBuffer<T = any>(
 
   allocator.transaction(() => {
     saveValueIterative(
-      externalArgsApiToExternalArgsApi(externalArgs),
+      externalArgsApiToExternalArgsApi(settings),
       carrier,
       referencedPointers,
       INITIAL_ENTRY_POINTER_TO_POINTER,
@@ -81,7 +84,7 @@ export function createObjectBuffer<T = any>(
   dv.setUint32(ENDIANNESS_FLAG_POINTER, getEndiannessOfSystem(), true);
 
   return createObjectWrapper(
-    externalArgsApiToExternalArgsApi(externalArgs),
+    externalArgsApiToExternalArgsApi(settings),
     carrier,
     carrier.heap.u32[
       INITIAL_ENTRY_POINTER_TO_POINTER / Uint32Array.BYTES_PER_ELEMENT
@@ -92,10 +95,17 @@ export function createObjectBuffer<T = any>(
 /**
  * Grow or shrink the underlying ArrayBuffer
  *
+ * Due to possible issues with future support of typed arrays,
+ * and the upcoming proposal, this api function may be removed
+ * https://github.com/tc39/proposal-resizablearraybuffer
+ *
  * @param objectBuffer
  * @param newSize
  */
-export function resizeObjectBuffer(objectBuffer: unknown, newSize: number) {
+export function unstable_resizeObjectBuffer(
+  objectBuffer: unknown,
+  newSize: number
+) {
   if (newSize < memoryStats(objectBuffer).top) {
     throw new OutOfMemoryError();
   }
@@ -128,11 +138,11 @@ export function getUnderlyingArrayBuffer(
  * The given ArrayBuffer is expected to be one obtained via getUnderlyingArrayBuffer
  * This operation doesn't change any value in the ArrayBuffer
  *
- * @param externalArgs
+ * @param settings
  * @param arrayBuffer
  */
 export function loadObjectBuffer<T = any>(
-  externalArgs: ExternalArgsApi,
+  settings: ObjectBufferSettings,
   arrayBuffer: ArrayBuffer | SharedArrayBuffer
 ): T {
   const allocator = TransactionalAllocator.load(arrayBuffer);
@@ -151,7 +161,7 @@ export function loadObjectBuffer<T = any>(
   }
 
   return createObjectWrapper(
-    externalArgsApiToExternalArgsApi(externalArgs),
+    externalArgsApiToExternalArgsApi(settings),
     carrier,
     carrier.heap.u32[
       INITIAL_ENTRY_POINTER_TO_POINTER / Uint32Array.BYTES_PER_ELEMENT
@@ -203,14 +213,14 @@ export function memoryStats(objectBuffer: unknown): MemoryStats {
   return { available, used: total - available, total, top };
 }
 
-export { disposeWrapperObject } from "./disposeWrapperObject";
+export { reclaim } from "./disposeWrapperObject";
 
 /**
- * Allows to update external args passed to createObjectBuffer
+ *  Update the settings of the given ObjectBuffer
  */
-export function updateExternalArgs(
+export function updateObjectBufferSettings(
   objectBuffer: unknown,
-  options: Partial<ExternalArgsApi>
+  options: ObjectBufferSettings
 ) {
   Object.assign(getInternalAPI(objectBuffer).getExternalArgs(), options);
 }
@@ -228,6 +238,6 @@ export function readExternalArgs(objectBuffer: unknown) {
  * because It's only safe to call it when you have a lock/similar (As any other operation)
  * And FinalizationRegistry might run when ever
  */
-export function collectGarbage(objectBuffer: unknown) {
+export function processQueuedReclaims(objectBuffer: unknown) {
   freeNoLongerUsedAddresses(getInternalAPI(objectBuffer).getCarrier());
 }

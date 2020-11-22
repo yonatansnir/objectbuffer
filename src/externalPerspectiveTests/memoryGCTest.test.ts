@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-env jest, node */
 import { createObjectBuffer } from "..";
-import { memoryStats, collectGarbage } from "../internal/api";
+import { memoryStats, processQueuedReclaims } from "../internal/api";
 import { sleep } from "../internal/testUtils";
 import { getInternalAPI } from "../internal/utils";
 import { getAddressesNoLongerUsed } from "../internal/stateModule";
@@ -79,7 +79,7 @@ describe("memory GC related tests", () => {
 
     await sleep(100);
 
-    collectGarbage(objectBuffer);
+    processQueuedReclaims(objectBuffer);
     const finalMemoryStats = memoryStats(objectBuffer);
 
     expect(finalMemoryStats.available).toBe(initialMemoryStats.available);

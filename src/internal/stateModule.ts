@@ -52,6 +52,6 @@ function supportWeakRef() {
   return (
     typeof WeakRef !== "undefined" &&
     (typeof FinalizationGroup !== "undefined" ||
-      typeof "FinalizationRegistry" !== "undefined")
+      typeof FinalizationRegistry !== "undefined")
   );
 }

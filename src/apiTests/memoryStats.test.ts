@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
 import { createObjectBuffer } from "../";
-import { resizeObjectBuffer, memoryStats } from "../internal/api";
+import { unstable_resizeObjectBuffer, memoryStats } from "../internal/api";
 import { externalArgsApiToExternalArgsApi } from "../internal/utils";
 
 describe("memoryStats test", () => {
@@ -40,7 +40,7 @@ describe("memoryStats test", () => {
       }
     `);
 
-    resizeObjectBuffer(objectBuffer, 1024);
+    unstable_resizeObjectBuffer(objectBuffer, 1024);
     expect(memoryStats(objectBuffer)).toMatchInlineSnapshot(`
       Object {
         "available": 64,
@@ -50,7 +50,7 @@ describe("memoryStats test", () => {
       }
     `);
 
-    resizeObjectBuffer(objectBuffer, 960);
+    unstable_resizeObjectBuffer(objectBuffer, 960);
     expect(memoryStats(objectBuffer)).toMatchInlineSnapshot(`
       Object {
         "available": 0,
@@ -60,7 +60,7 @@ describe("memoryStats test", () => {
       }
     `);
 
-    resizeObjectBuffer(objectBuffer, 2048);
+    unstable_resizeObjectBuffer(objectBuffer, 2048);
     expect(memoryStats(objectBuffer)).toMatchInlineSnapshot(`
       Object {
         "available": 1088,
