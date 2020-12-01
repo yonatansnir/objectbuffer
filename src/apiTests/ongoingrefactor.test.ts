@@ -28,7 +28,7 @@ describe("ongoingrefactor", function () {
       },
       arr1: [1, 2, 3, 4, 5, 6],
       arr2: ["a", "b", "c"],
-      arr3: [["a", "b", 3], { a: "c" }],
+      arr3: [{}, ["a", "b", 3], { a: "c" }],
     });
     expect(ob).toMatchInlineSnapshot(`
       Object {

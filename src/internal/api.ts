@@ -232,7 +232,7 @@ export function updateObjectBufferSettings(
   Object.assign(getInternalAPI(objectBuffer).getExternalArgs(), options);
 }
 
-export function readExternalArgs(objectBuffer: unknown) {
+export function readObjectBufferSettings(objectBuffer: unknown) {
   return getInternalAPI(objectBuffer).getExternalArgs();
 }
 
