@@ -27,6 +27,7 @@ export interface ExternalArgs {
   /**
    * Allocate additional memory for array pointers,
    * will prevent the reallocation and copy when array is getting bigger
+   * @default 0
    */
   readonly arrayAdditionalAllocation: number;
 }
@@ -45,6 +46,7 @@ export interface ObjectBufferSettings {
   /**
    * Allocate additional memory for array pointers,
    * will prevent the reallocation and copy when array is getting bigger
+   * @default 0
    */
   readonly arrayAdditionalAllocation?: number;
 }

@@ -1,14 +1,13 @@
 /* eslint-env jest */
 
-import { updateExternalArgs, createObjectBuffer } from "..";
+import { updateObjectBufferSettings, createObjectBuffer } from "..";
 import { readExternalArgs } from "../internal/api";
 
 test("readExternalArgs", () => {
-  const ob = createObjectBuffer(
-    { hashMapLoadFactor: 2, arrayAdditionalAllocation: 5 },
-    512,
-    {}
-  );
+  const ob = createObjectBuffer(512, {
+    hashMapLoadFactor: 2,
+    arrayAdditionalAllocation: 5,
+  });
 
   expect(readExternalArgs(ob)).toEqual({
     hashMapLoadFactor: 2,
@@ -17,14 +16,13 @@ test("readExternalArgs", () => {
   });
 });
 
-test("updateExternalArgs", () => {
-  const ob = createObjectBuffer(
-    { hashMapLoadFactor: 2, arrayAdditionalAllocation: 7 },
-    512,
-    {}
-  );
+test("updateObjectBufferSettings", () => {
+  const ob = createObjectBuffer(512, {
+    hashMapLoadFactor: 2,
+    arrayAdditionalAllocation: 7,
+  });
 
-  updateExternalArgs(ob, {
+  updateObjectBufferSettings(ob, {
     hashMapLoadFactor: 10,
     arrayAdditionalAllocation: 5,
     hashMapMinInitialCapacity: 20,

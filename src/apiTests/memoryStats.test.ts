@@ -2,15 +2,10 @@
 
 import { createObjectBuffer } from "../";
 import { unstable_resizeObjectBuffer, memoryStats } from "../internal/api";
-import { externalArgsApiToExternalArgsApi } from "../internal/utils";
 
 describe("memoryStats test", () => {
-  const externalArgs = externalArgsApiToExternalArgsApi({
-    arrayAdditionalAllocation: 0,
-  });
-
   test("memoryStats test", () => {
-    const objectBuffer = createObjectBuffer<any>(externalArgs, 1024, {
+    const objectBuffer = createObjectBuffer<any>(1024, {
       arr: [1, 2, 3, 4],
       obj: { a: 1 },
     });
@@ -26,7 +21,7 @@ describe("memoryStats test", () => {
   });
 
   test("memoryStats after resize", () => {
-    const objectBuffer = createObjectBuffer<any>(externalArgs, 2048, {
+    const objectBuffer = createObjectBuffer<any>(2048, {
       arr: [1, 2, 3, 4],
       obj: { a: 1 },
     });

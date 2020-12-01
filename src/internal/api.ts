@@ -101,6 +101,8 @@ export function createObjectBuffer<T = any>(
  *
  * @param objectBuffer
  * @param newSize
+ *
+ * @unstable
  */
 export function unstable_resizeObjectBuffer(
   objectBuffer: unknown,
@@ -121,7 +123,7 @@ export function unstable_resizeObjectBuffer(
     0
   );
 
-  replaceUnderlyingArrayBuffer(objectBuffer, newArrayBuffer);
+  unstable_replaceUnderlyingArrayBuffer(objectBuffer, newArrayBuffer);
 
   return newArrayBuffer;
 }
@@ -176,10 +178,15 @@ export function loadObjectBuffer<T = any>(
  *
  * Consider using `resizeObjectBuffer`
  *
+ * Due to possible issues with future support of typed arrays,
+ * and the upcoming proposal, this api function may be removed
+ * https://github.com/tc39/proposal-resizablearraybuffer
+ *
  * @param objectBuffer
  * @param newArrayBuffer
+ * @unstable
  */
-export function replaceUnderlyingArrayBuffer(
+export function unstable_replaceUnderlyingArrayBuffer(
   objectBuffer: unknown,
   newArrayBuffer: ArrayBuffer | SharedArrayBuffer
 ) {
@@ -213,7 +220,7 @@ export function memoryStats(objectBuffer: unknown): MemoryStats {
   return { available, used: total - available, total, top };
 }
 
-export { reclaim } from "./disposeWrapperObject";
+export { reclaim } from "./reclaim";
 
 /**
  *  Update the settings of the given ObjectBuffer

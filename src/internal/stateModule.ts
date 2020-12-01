@@ -9,7 +9,9 @@ import { WeakValueMap } from "./WeakValueMap";
 // this is state
 const addressesNoLongerUsed = new WeakMap<GlobalCarrier, number[]>();
 
-export function getAddressesNoLongerUsed(carrier: GlobalCarrier) {
+export function getAddressesNoLongerUsedArrayForCarrier(
+  carrier: GlobalCarrier
+) {
   let l = addressesNoLongerUsed.get(carrier);
 
   if (l === undefined) {

@@ -9,11 +9,11 @@
 
 export {
   createObjectBuffer,
-  disposeWrapperObject,
+  reclaim,
   getUnderlyingArrayBuffer,
   loadObjectBuffer,
   memoryStats,
-  replaceUnderlyingArrayBuffer,
+  unstable_replaceUnderlyingArrayBuffer,
   unstable_resizeObjectBuffer,
   updateObjectBufferSettings,
 } from "./internal/api";

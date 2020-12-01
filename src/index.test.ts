@@ -18,11 +18,15 @@ describe("createObjectBuffer", () => {
   });
 
   test("createObjectBuffer simple", () => {
-    const o = createObjectBuffer(externalArgs, 1024, {
-      a: "b",
-      b: null,
-      c: { t: 5 },
-    });
+    const o = createObjectBuffer(
+      1024,
+      {
+        a: "b",
+        b: null,
+        c: { t: 5 },
+      },
+      externalArgs
+    );
 
     expect(o).toMatchInlineSnapshot(`
       Object {
@@ -41,10 +45,14 @@ describe("getUnderlyingArrayBuffer", () => {
     arrayAdditionalAllocation: 0,
   });
   test("getUnderlyingArrayBuffer simple", () => {
-    const o = createObjectBuffer(externalArgs, 1024, {
-      b: null,
-      c: { t: 5 },
-    });
+    const o = createObjectBuffer(
+      1024,
+      {
+        b: null,
+        c: { t: 5 },
+      },
+      externalArgs
+    );
 
     const arrayBuffer = getUnderlyingArrayBuffer(o);
 
@@ -63,11 +71,15 @@ describe("loadObjectBuffer", () => {
   });
 
   test("loadObjectBuffer simple", () => {
-    const o = createObjectBuffer(externalArgs, 1024, {
-      a: "b",
-      b: null,
-      c: { t: 5 },
-    });
+    const o = createObjectBuffer(
+      1024,
+      {
+        a: "b",
+        b: null,
+        c: { t: 5 },
+      },
+      externalArgs
+    );
 
     const arrayBuffer = getUnderlyingArrayBuffer(o);
 
@@ -87,11 +99,15 @@ describe("loadObjectBuffer", () => {
   });
 
   test("Endianness miss match", () => {
-    const o = createObjectBuffer(externalArgs, 1024, {
-      a: "b",
-      b: null,
-      c: { t: 5 },
-    });
+    const o = createObjectBuffer(
+      1024,
+      {
+        a: "b",
+        b: null,
+        c: { t: 5 },
+      },
+      externalArgs
+    );
 
     const arrayBuffer = getUnderlyingArrayBuffer(o);
 
