@@ -95,6 +95,7 @@ export function createObjectBuffer<T = any>(
 /**
  * Grow or shrink the underlying ArrayBuffer
  *
+ * @unstable
  * Due to possible issues with future support of typed arrays,
  * and the upcoming proposal, this api function may be removed
  * https://github.com/tc39/proposal-resizablearraybuffer
@@ -102,7 +103,6 @@ export function createObjectBuffer<T = any>(
  * @param objectBuffer
  * @param newSize
  *
- * @unstable
  */
 export function unstable_resizeObjectBuffer(
   objectBuffer: unknown,
@@ -144,8 +144,8 @@ export function getUnderlyingArrayBuffer(
  * @param arrayBuffer
  */
 export function loadObjectBuffer<T = any>(
-  settings: ObjectBufferSettings,
-  arrayBuffer: ArrayBuffer | SharedArrayBuffer
+  arrayBuffer: ArrayBuffer | SharedArrayBuffer,
+  settings: ObjectBufferSettings = {}
 ): T {
   const allocator = TransactionalAllocator.load(arrayBuffer);
 
@@ -159,7 +159,7 @@ export function loadObjectBuffer<T = any>(
   const endiannessOfGivenAb = dv.getUint32(ENDIANNESS_FLAG_POINTER, true);
 
   if (endiannessOfGivenAb !== getEndiannessOfSystem()) {
-    throw new Error("Endianness miss-match");
+    throw new Error("Endianness mismatch");
   }
 
   return createObjectWrapper(
@@ -178,13 +178,13 @@ export function loadObjectBuffer<T = any>(
  *
  * Consider using `resizeObjectBuffer`
  *
+ * @unstable
  * Due to possible issues with future support of typed arrays,
  * and the upcoming proposal, this api function may be removed
  * https://github.com/tc39/proposal-resizablearraybuffer
  *
  * @param objectBuffer
  * @param newArrayBuffer
- * @unstable
  */
 export function unstable_replaceUnderlyingArrayBuffer(
   objectBuffer: unknown,
@@ -201,7 +201,7 @@ export function unstable_replaceUnderlyingArrayBuffer(
   const endiannessOfGivenAb = dv.getUint32(ENDIANNESS_FLAG_POINTER, true);
 
   if (endiannessOfGivenAb !== getEndiannessOfSystem()) {
-    throw new Error("Endianness miss-match");
+    throw new Error("Endianness mismatch");
   }
 
   allocator.setNewEnd(newArrayBuffer.byteLength);
