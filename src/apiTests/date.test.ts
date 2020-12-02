@@ -2,7 +2,6 @@
 
 import { createObjectBuffer } from "../";
 import { memoryStats } from "../internal/api";
-import { externalArgsApiToExternalArgsApi } from "../internal/utils";
 
 describe("Date test", () => {
   test("Date object test", () => {
